@@ -18,6 +18,7 @@ $(BIN): $(OBJS)
 
 obj/%.o:src/%.c
 	echo Compiling $(SRCS) into $(OBJS)
+	mkdir -p obj/
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
