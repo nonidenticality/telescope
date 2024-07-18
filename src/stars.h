@@ -10,6 +10,8 @@ void setup(void);
 
 void render(View*);
 
+void wipe(void);
+
 int take_input(void);
 
 void finish(void);

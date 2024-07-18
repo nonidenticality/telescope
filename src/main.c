@@ -4,11 +4,14 @@
 
 char exit_flag = 1;
 
-void handle_input(int ch) {
+void handle_input(View* view, int ch) {
     switch (ch) {
         case 'q':
             exit_flag = 0;
             break;
+        case ' ':
+            view->seed = rand();
+            wipe();
         default:
             break;
     }
@@ -22,7 +25,7 @@ int main() {
     while(exit_flag) {
         render(&view);
 
-        handle_input(take_input());
+        handle_input(&view, take_input());
     }
 
     finish();
