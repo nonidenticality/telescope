@@ -14,31 +14,19 @@ static int WIDTH;
 static int HEIGHT;
 
 void setup() {
+
     initscr();
+
+    win = newwin(HEIGHT, WIDTH, STARTING_X, STARTING_Y);
+
+    noecho();
+    wtimeout(win, 0);
+    curs_set(0);
 
     WIDTH = COLS;
     HEIGHT = LINES;
 
-    cbreak();
-    noecho();
-    curs_set(0);
 
-    win = newwin(HEIGHT, WIDTH, STARTING_X, STARTING_Y);
-}
-
-long get_current_time() {
-    time_t timer;
-    return time(&timer);
-}
-
-void animate_star(int x, int y) {
-    char time_factor = (int)(get_current_time());
-
-    if (time_factor % 2) {
-        mvwprintw(win, y, x, "*");
-    } else {
-        mvwprintw(win, y, x, "·");
-    }
 }
 
 void render_star(View* view, int x, int y) {
@@ -49,7 +37,6 @@ void render_star(View* view, int x, int y) {
             mvwprintw(win, y, x, "*");
         } else {
             mvwprintw(win, y, x, "·");
-            // animate_star(x, y);
         }
     }
 }
@@ -62,10 +49,34 @@ void render_stars(View *view) {
     }
 }
 
+char* get_current_time() {
+    time_t t;
+    time(&t);
+    struct tm *t_info = localtime(&t);
+
+    char* array = malloc(sizeof(char) * 9);
+    sprintf(array, "%02d:%02d:%02d", t_info->tm_hour, t_info->tm_min, t_info->tm_sec);
+    return array;
+}
+
+void render_timer() {
+    WINDOW *timer_win = newwin(3, 10, 1, 1);
+    box(timer_win, 0, 0);
+    char* time = get_current_time();
+    for (int i = 0; i < 9; i++) {
+        if (!time[i]) break;
+        mvwaddch(timer_win, 1, i  + 1, time[i]);
+    }
+    free(time);
+    wrefresh(timer_win);
+    delwin(timer_win);
+}
+
 void render(View *view) {
     box(win, 0, 0);
     render_stars(view);
     wrefresh(win);
+    render_timer();
 }
 
 void wipe() {
@@ -77,6 +88,7 @@ int take_input() {
 }
 
 void finish() {
+    clear();
     delwin(win);
     win = NULL;
     endwin();
