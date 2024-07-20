@@ -18,18 +18,23 @@ void handle_input(View* view, int ch) {
     }
 }
 
+void set_random() {
+    srand(time(NULL));
+}
+
 int main() {
-    View view = {(long)rand(), 5, 5};
+    set_random();
+    View view = {(long)rand(), 0, 0};
 
     setup();
 
-    struct timespec down_cycle = {0, 1000000};
+    struct timespec down_cycle = {0, 600000};
 
     while(exit_flag) {
         render(&view);
 
-         handle_input(&view, take_input());
-         nanosleep(&down_cycle, NULL);
+        handle_input(&view, take_input());
+        nanosleep(&down_cycle, NULL);
     }
 
     finish();

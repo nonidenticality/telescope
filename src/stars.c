@@ -15,7 +15,6 @@ static int WIDTH;
 static int HEIGHT;
 
 void setup() {
-
     initscr();
 
     WIDTH = COLS;
@@ -31,19 +30,19 @@ void setup() {
 
 void render_star(View* view, int x, int y) {
     int seed = view->seed;
-    
+
     if (!((seed + (int)(191 * cos(x & y) + 13 * (x | y) - 31 * x * y * cos(x ^ y))) % 13)) {
         if (!((int)(seed + (x + y * cos(x | y) + cos(x ^ y))) % 3)) {
             mvwprintw(win, y, x, "*");
         } else {
-            mvwprintw(win, y, x, "·");
+            mvwprintw(win, y, x, ".");
         }
     }
 }
 
 void render_stars(View *view) {
-    for (int i = STARTING_Y + 1; i < HEIGHT - 1; i++) {
-        for (int j = STARTING_X + 1; j < WIDTH - 1; j++) {
+    for (int i = STARTING_Y + 1; i < LINES - 1; i++) {
+        for (int j = STARTING_X + 1; j < COLS - 1; j++) {
             render_star(view, j, i);
         }
     }
@@ -54,16 +53,20 @@ char* get_current_time() {
     time(&t);
     struct tm *t_info = localtime(&t);
 
-    char* array = malloc(sizeof(char) * 9);
-    sprintf(array, "%02d:%02d:%02d", t_info->tm_hour, t_info->tm_min, t_info->tm_sec);
-    return array;
+    char* text = malloc(sizeof(char) * 9);
+    sprintf(text, "%02d:%02d:%02d",
+            t_info->tm_hour,
+            t_info->tm_min,
+            t_info->tm_sec);
+    return text;
 }
 
 void render_timer() {
+    werase(timer_win);
     char* time = get_current_time();
     for (int i = 0; i < 9; i++) {
         if (!time[i]) break;
-        mvwaddch(timer_win, 1, i  + 1, time[i]);
+        mvwaddch(timer_win, 1, i + 1, time[i]);
     }
     free(time);
     box(timer_win, 0, 0);
@@ -71,14 +74,16 @@ void render_timer() {
 }
 
 void render(View *view) {
-    box(win, 0, 0);
+    wipe();
     render_stars(view);
+    box(win, 0, 0);
+    wresize(win, LINES, COLS);
     wrefresh(win);
     render_timer();
 }
 
 void wipe() {
-    wclear(win);
+    werase(win);
 }
 
 int take_input() {
