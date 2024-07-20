@@ -7,6 +7,7 @@
 #include "stars.h"
 
 static WINDOW * win = NULL;
+static WINDOW * timer_win = NULL;
 
 static int STARTING_Y = 0;
 static int STARTING_X = 0;
@@ -17,16 +18,15 @@ void setup() {
 
     initscr();
 
+    WIDTH = COLS;
+    HEIGHT = LINES;
+
     win = newwin(HEIGHT, WIDTH, STARTING_X, STARTING_Y);
+    timer_win= newwin(3, 10, 1, 1);
 
     noecho();
     wtimeout(win, 0);
     curs_set(0);
-
-    WIDTH = COLS;
-    HEIGHT = LINES;
-
-
 }
 
 void render_star(View* view, int x, int y) {
@@ -60,16 +60,14 @@ char* get_current_time() {
 }
 
 void render_timer() {
-    WINDOW *timer_win = newwin(3, 10, 1, 1);
-    box(timer_win, 0, 0);
     char* time = get_current_time();
     for (int i = 0; i < 9; i++) {
         if (!time[i]) break;
         mvwaddch(timer_win, 1, i  + 1, time[i]);
     }
     free(time);
+    box(timer_win, 0, 0);
     wrefresh(timer_win);
-    delwin(timer_win);
 }
 
 void render(View *view) {
@@ -89,7 +87,12 @@ int take_input() {
 
 void finish() {
     clear();
+
     delwin(win);
     win = NULL;
+
+    delwin(timer_win);
+    timer_win = NULL;
+
     endwin();
 }
