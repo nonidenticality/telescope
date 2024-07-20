@@ -8,10 +8,6 @@ BIN=telescope.sh
 
 all: $(BIN)
 
-echo:
-	echo $(SRCS)
-	echo $(OBJS)
-
 $(BIN): $(OBJS)
 	echo Linking $(OBJS) into $(BIN)
 	$(CC) -o $@ $^ $(DEPS)
