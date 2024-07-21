@@ -18,17 +18,17 @@ void handle_input(View* view, int ch) {
     }
 }
 
-void set_random() {
+void randomize() {
     srand(time(NULL));
 }
 
 int main() {
-    set_random();
-    View view = {(long)rand(), 0, 0};
+    randomize();
+    View view = {(long)rand()};
 
     setup();
 
-    struct timespec down_cycle = {0, 600000};
+    struct timespec down_cycle = {0, 10000000};
 
     while(exit_flag) {
         render(&view);

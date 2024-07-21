@@ -5,9 +5,12 @@
 #include <math.h>
 
 #include "stars.h"
+#include "comets.h"
 
 static WINDOW * win = NULL;
 static WINDOW * timer_win = NULL;
+
+static Comet *comet;
 
 static int STARTING_Y = 0;
 static int STARTING_X = 0;
@@ -19,6 +22,7 @@ void setup() {
 
     WIDTH = COLS;
     HEIGHT = LINES;
+    comet = create_comet(WIDTH, HEIGHT);
 
     win = newwin(HEIGHT, WIDTH, STARTING_X, STARTING_Y);
     timer_win= newwin(3, 10, 1, 1);
@@ -26,6 +30,12 @@ void setup() {
     noecho();
     wtimeout(win, 0);
     curs_set(0);
+}
+
+void resize(WINDOW *win) {
+    WIDTH = COLS;
+    HEIGHT = LINES;
+    wresize(win, HEIGHT, WIDTH);
 }
 
 void render_star(View* view, int x, int y) {
@@ -41,11 +51,15 @@ void render_star(View* view, int x, int y) {
 }
 
 void render_stars(View *view) {
+    werase(win);
     for (int i = STARTING_Y + 1; i < LINES - 1; i++) {
         for (int j = STARTING_X + 1; j < COLS - 1; j++) {
             render_star(view, j, i);
         }
     }
+    box(win, 0, 0);
+    resize(win);
+    wrefresh(win);
 }
 
 char* get_current_time() {
@@ -65,7 +79,8 @@ void render_timer() {
     werase(timer_win);
     char* time = get_current_time();
     for (int i = 0; i < 9; i++) {
-        if (!time[i]) break;
+        if (!time[i])
+            break;
         mvwaddch(timer_win, 1, i + 1, time[i]);
     }
     free(time);
@@ -74,15 +89,15 @@ void render_timer() {
 }
 
 void render(View *view) {
-    wipe();
     render_stars(view);
-    box(win, 0, 0);
-    wresize(win, LINES, COLS);
-    wrefresh(win);
-    render_timer();
+    render_comet(win, comet);
+    move_comet(comet);
+    // render_timer();
 }
 
 void wipe() {
+    delete_comet(comet);
+    comet = create_comet(WIDTH, HEIGHT);
     werase(win);
 }
 
@@ -98,6 +113,9 @@ void finish() {
 
     delwin(timer_win);
     timer_win = NULL;
+
+    delete_comet(comet);
+    comet = NULL;
 
     endwin();
 }

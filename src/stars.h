@@ -3,7 +3,6 @@
 
 typedef struct {
     long seed;
-    unsigned int x, y;
 } View;
 
 void setup(void);
