@@ -14,20 +14,27 @@ typedef enum {
 } VDirection;
 
 typedef struct {
-    unsigned long seed;
     unsigned int lifespan, halflife, size, trail;
     unsigned int startX, startY, currentX, currentY;
-    HDirection xDir;
-    VDirection yDir;
 } Comet;
 
+typedef struct {
+    Comet **comets;
+    unsigned int size;
+    HDirection xDir;
+    VDirection yDir;
+} CometStorm;
 
-Comet * create_comet(unsigned int, unsigned int);
+void comets_setup();
 
-void move_comet(Comet *comet);
+void spawn_new_comets();
 
-void render_comet(WINDOW *win, Comet *comet);
+void wipe_comets();
 
-void delete_comet(Comet *comet);
+void move_comets();
+
+void render_comets(WINDOW *win);
+
+void comets_finish();
 
 #endif

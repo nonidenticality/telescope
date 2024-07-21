@@ -10,19 +10,18 @@
 static WINDOW * win = NULL;
 static WINDOW * timer_win = NULL;
 
-static Comet *comet;
-
 static int STARTING_Y = 0;
 static int STARTING_X = 0;
-static int WIDTH;
-static int HEIGHT;
+static unsigned int WIDTH;
+static unsigned int HEIGHT;
 
 void setup() {
     initscr();
 
     WIDTH = COLS;
     HEIGHT = LINES;
-    comet = create_comet(WIDTH, HEIGHT);
+    comets_setup();
+    spawn_new_comets();
 
     win = newwin(HEIGHT, WIDTH, STARTING_X, STARTING_Y);
     timer_win= newwin(3, 10, 1, 1);
@@ -90,14 +89,15 @@ void render_timer() {
 
 void render(View *view) {
     render_stars(view);
-    render_comet(win, comet);
-    move_comet(comet);
+    render_comets(win);
+    move_comets();
+    spawn_new_comets();
     // render_timer();
 }
 
 void wipe() {
-    delete_comet(comet);
-    comet = create_comet(WIDTH, HEIGHT);
+    wipe_comets();
+    spawn_new_comets();
     werase(win);
 }
 
@@ -114,8 +114,7 @@ void finish() {
     delwin(timer_win);
     timer_win = NULL;
 
-    delete_comet(comet);
-    comet = NULL;
+    comets_finish();
 
     endwin();
 }
