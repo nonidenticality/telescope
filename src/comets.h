@@ -25,16 +25,16 @@ typedef struct {
     VDirection yDir;
 } CometStorm;
 
-void comets_setup();
+void setup_comets(void);
 
-void spawn_new_comets();
+void spawn_new_comets(void);
 
-void wipe_comets();
+void wipe_comets(void);
 
-void move_comets();
+void move_comets(void);
 
 void render_comets(WINDOW *win);
 
-void comets_finish();
+void finish_comets(void);
 
 #endif

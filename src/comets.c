@@ -28,19 +28,28 @@ char get_direction_char() {
 int get_trail_x(Comet *comet, unsigned int i) {
     if (storm.xDir == LEFT) {
         return comet->currentX - i;
+    } else if (storm.xDir == RIGHT) {
+        return comet->currentX + i;
     }
-    return comet->currentX + i;
+    return comet->currentX;
 }
 
 int get_trail_y(Comet *comet, unsigned int i) {
     if (storm.yDir == UP) {
         return comet->currentY - i;
+    } else if (storm.yDir == DOWN) {
+        return comet->currentY + i;
     }
-    return comet->currentY + i;
+    return comet->currentY;
 }
 
 void render_trail(WINDOW *win, Comet *comet) {
     for (unsigned int i = 0; i < comet->trail; i++) {
+        int x = get_trail_x(comet, i);
+        int y = get_trail_y(comet, i);
+        if (x <= 1 || y <= 1 || x >= COLS - 1 || y >= LINES - 1) {
+            continue;
+        }
         mvwaddch(win,
                  get_trail_y(comet, i),
                  get_trail_x(comet, i),
@@ -131,7 +140,7 @@ void clear_comets() {
     storm.size = 0;
 }
 
-void comets_setup() {
+void setup_comets() {
     storm.size = 0;
     storm.comets = malloc(sizeof(Comet*) * COMET_LIMIT);
 }
@@ -150,7 +159,7 @@ bool is_below_size_limit() {
 }
 
 bool is_comet_expired(Comet *comet) {
-    return comet->lifespan >= comet->halflife;
+    return comet->lifespan - comet->trail >= comet->halflife;
 }
 
 bool is_every_comet_expired() {
@@ -166,6 +175,9 @@ bool is_every_comet_expired() {
 void spawn_new_comets() {
     if (is_every_comet_expired()) {
         clear_comets();
+    }
+    if (current_time() % 3) {
+        return;
     }
     if (!is_below_size_limit()) {
         return;
@@ -191,7 +203,7 @@ void render_comets(WINDOW *win) {
     }
 }
 
-void comets_finish() {
+void finish_comets() {
     clear_comets();
     free(storm.comets);
 }

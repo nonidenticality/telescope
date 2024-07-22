@@ -1,17 +1,16 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "stars.h"
+#include "renderer.h"
 
 char exit_flag = 1;
 
-void handle_input(View* view, int ch) {
+void handle_input(int ch) {
     switch (ch) {
         case 'q':
             exit_flag = 0;
             break;
         case ' ':
-            view->seed = rand();
             wipe();
         default:
             break;
@@ -24,16 +23,15 @@ void randomize() {
 
 int main() {
     randomize();
-    View view = {(long)rand()};
 
     setup();
 
     struct timespec down_cycle = {0, 10000000};
 
     while(exit_flag) {
-        render(&view);
+        render();
 
-        handle_input(&view, take_input());
+        handle_input(take_input());
         nanosleep(&down_cycle, NULL);
     }
 

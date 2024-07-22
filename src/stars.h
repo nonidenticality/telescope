@@ -1,18 +1,18 @@
 #ifndef STARS_H
 #define STARS_H
 
+#include <ncurses.h>
+
 typedef struct {
     long seed;
 } View;
 
-void setup(void);
+void setup_stars(void);
 
-void render(View*);
+void render_stars(WINDOW*);
 
-void wipe(void);
+void wipe_stars(void);
 
-int take_input(void);
-
-void finish(void);
+void finish_stars(void);
 
 #endif
