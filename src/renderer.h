@@ -1,5 +1,5 @@
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef RENDERER_H
+#define RENDERER_H
 
 void setup(void);
 

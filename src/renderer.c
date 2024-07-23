@@ -46,7 +46,7 @@ void render() {
     box(win, 0, 0);
     wrefresh(win);
 
-    render_timer();
+    // render_timer();
 }
 
 int take_input() {
