@@ -43,7 +43,7 @@ void render() {
     move_comets();
     spawn_new_comets();
 
-    box(win, 0, 0);
+    // box(win, 0, 0);
     wrefresh(win);
 
     // render_timer();
