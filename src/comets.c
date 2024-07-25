@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <time.h>
 
+#include "clock.h"
 #include "comets.h"
 
 static const unsigned int COMET_LIMIT = 2;
@@ -150,10 +151,6 @@ void wipe_comets() {
     refresh_storm();
 }
 
-long current_time() {
-    return time(NULL);
-}
-
 bool is_below_size_limit() {
     return storm.size <= COMET_LIMIT;
 }
@@ -176,7 +173,7 @@ void spawn_new_comets() {
     if (is_every_comet_expired()) {
         clear_comets();
     }
-    if (current_time() % 3) {
+    if (get_current_time() % 3) {
         return;
     }
     if (!is_below_size_limit()) {
