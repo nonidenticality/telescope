@@ -13,7 +13,7 @@ void setup_timer() {
     timer_win = newwin(TIMER_HEIGHT, TIMER_WIDTH, 1, 1);
 }
 
-char* get_current_time() {
+char* get_time() {
     time_t t;
     time(&t);
     struct tm *t_info = localtime(&t);
@@ -32,7 +32,7 @@ void wipe_timer() {
 
 void render_timer() {
     werase(timer_win);
-    char* time = get_current_time();
+    char* time = get_time();
     for (int i = 0; i < 9; i++) {
         if (!time[i])
             break;

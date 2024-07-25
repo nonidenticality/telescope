@@ -5,6 +5,7 @@
 
 #include "stars.h"
 #include "comets.h"
+#include "aliens.h"
 #include "timer.h"
 
 static WINDOW * win = NULL;
@@ -39,9 +40,13 @@ void render() {
 
     render_stars(win);
     render_comets(win);
+    render_aliens(win);
 
     move_comets();
     spawn_new_comets();
+
+    move_aliens();
+    spawn_new_aliens();
 
     // box(win, 0, 0);
     wrefresh(win);
