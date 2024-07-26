@@ -4,7 +4,7 @@
 #include "clock.h"
 
 
-static const char *SHIP_CHAR = "¤";
+static const char *SHIP_CHAR = "(O)";
 
 typedef struct {
     unsigned int x, y,
@@ -25,6 +25,7 @@ void setup_aliens() {
 }
 
 void render_alien(WINDOW *win, Alien *alien) {
+    //mvwprintw(win, alien->y, alien->x, "%s", SHIP_CHAR);
     mvwprintw(win, alien->y, alien->x, "%s", SHIP_CHAR);
 }
 
@@ -45,20 +46,28 @@ void new_interest_point(Alien *alien) {
 }
 
 void move_alien(Alien *alien) {
-    if (get_current_time() % 5) {
+    if (!(get_current_nanoseconds() % 15)) {
         new_interest_point(alien);
     }
 
+    if (get_current_nanoseconds() % 2) {
+        return;
+    }
+
     if (alien->x < alien->toX) {
-        alien->vX = (rand() % 2);
+        // alien->vX = (rand() % 2);
+        alien->vX = 1;
     } else if (alien->x > alien->toX) {
-        alien->vX = (rand() % 2) - 2;
+        // alien->vX = (rand() % 2) - 2;
+        alien->vX = -1;
     }
 
     if (alien->y < alien->toY) {
-        alien->vY = (rand() % 2);
+        // alien->vY = (rand() % 2);
+        alien->vY = 1;
     } else if (alien->y > alien->toY) {
-        alien->vY = (rand() % 2) - 2;
+        // alien->vY = (rand() % 2) - 2;
+        alien->vY = -1;
     }
 
     alien->x += alien->vX;
