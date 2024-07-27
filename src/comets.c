@@ -173,7 +173,7 @@ void spawn_new_comets() {
     if (is_every_comet_expired()) {
         clear_comets();
     }
-    if (get_current_time() % 3) {
+    if (get_current_nanoseconds() % 110) {
         return;
     }
     if (!is_below_size_limit()) {
