@@ -13,6 +13,6 @@ uint64_t get_current_nanoseconds() {
         return 0;
     }
 
-    return 1000000000 * ts.tv_sec + ts.tv_nsec;
+    return 10000000 * ts.tv_sec + ts.tv_nsec;
 }
 
