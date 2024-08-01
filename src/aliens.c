@@ -9,8 +9,7 @@ enum AlienState{
 };
 
 static const enum AlienState INITIAL_STATE = INACTIVE;
-static const char *SHIP_CHAR = "(O)";
-
+static const char *SHIP_CHAR = "0";
 
 typedef struct {
     enum AlienState state;
@@ -51,32 +50,31 @@ void render_aliens(WINDOW* win) {
     }
 }
 
+void set_random_position(Alien* alien) {
+    alien->x = rand() % COLS;
+    alien->y = rand() % LINES;
+}
+
 void cycle_aliens() {
     unsigned long current_nanoseconds = get_current_nanoseconds();
-    if (!(current_nanoseconds % 171)) {
-        for (unsigned int i = 0; i < aliens_length; i++) {
-            if (!((i + 1 + current_nanoseconds) % aliens_length)) {
-                continue;
-            }
+    for (unsigned int i = 0; i < aliens_length; i++) {
+        if (!((i + 1 + current_nanoseconds) % aliens_length)) {
+            continue;
+        }
+        if (!(current_nanoseconds % 171)) {
             if (aliens[i].state == ACTIVE) {
                 aliens[i].state = INACTIVE;
                 break;
             }
         }
-    }
-
-    if (!(current_nanoseconds % 1171)) {
-        for (unsigned int i = 0; i < aliens_length; i++) {
-            if (!((i + 1 + current_nanoseconds) % aliens_length)) {
-                continue;
-            }
+        if (!(current_nanoseconds % 531)) {
             if (aliens[i].state == INACTIVE) {
                 aliens[i].state = ACTIVE;
+                set_random_position(&aliens[i]);
                 break;
             }
         }
     }
-
 }
 
 void spawn_new_aliens() {
@@ -103,6 +101,8 @@ void move_alien(Alien *alien) {
     } else if (alien->x > alien->toX) {
         // alien->vX = (rand() % 2) - 2;
         alien->vX = -1;
+    } else {
+        alien->vX = 0;
     }
 
     if (alien->y < alien->toY) {
@@ -111,6 +111,8 @@ void move_alien(Alien *alien) {
     } else if (alien->y > alien->toY) {
         // alien->vY = (rand() % 2) - 2;
         alien->vY = -1;
+    } else {
+        alien->vY = 0;
     }
 
     alien->x += alien->vX;
@@ -124,7 +126,10 @@ void move_aliens() {
 }
 
 void wipe_aliens() {
-    
+    for (unsigned int i = 0; i < aliens_length; i++) {
+        set_random_position(&aliens[i]);
+        aliens[i].state = INACTIVE;
+    }
 }
 
 void finish_aliens() {

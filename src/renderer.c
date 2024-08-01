@@ -61,6 +61,7 @@ int take_input() {
 void wipe() {
     wipe_stars();
     wipe_comets();
+    wipe_aliens();
     wipe_timer();
 }
 
