@@ -36,7 +36,11 @@ void render_alien(WINDOW *win, Alien *alien) {
 }
 
 void render_vroom(WINDOW *win, Alien *alien) {
-    mvwprintw(win, alien->y, alien->x, "o");
+    if (get_current_nanoseconds() % 2) {
+        mvwprintw(win, alien->y, alien->x, "x");
+    } else {
+        mvwprintw(win, alien->y, alien->x, "+");
+    }
 }
 
 void render_aliens(WINDOW* win) {
@@ -55,25 +59,45 @@ void set_random_position(Alien* alien) {
     alien->y = rand() % LINES;
 }
 
+void cycle_active_alien(Alien *alien) {
+    if (!(get_current_nanoseconds() % 171)) {
+        alien->state = VROOMING;
+    }
+}
+
+void cycle_vrooming_alien(Alien * alien) {
+    if (!(get_current_nanoseconds() % 11)) {
+        alien->state = INACTIVE;
+    }
+}
+
+void cycle_inactive_alien(Alien *alien) {
+    if (!(get_current_nanoseconds() % 531)) {
+        alien->state = ACTIVE;
+        set_random_position(alien);
+    }
+}
+
+void cycle_alien(Alien *alien) {
+    switch (aliens->state) {
+        case ACTIVE:
+            cycle_active_alien(alien);
+            break;
+        case VROOMING:
+            cycle_vrooming_alien(alien);
+            break;
+        case INACTIVE:
+            cycle_inactive_alien(alien);
+            break;
+    }
+}
+
 void cycle_aliens() {
-    unsigned long current_nanoseconds = get_current_nanoseconds();
     for (unsigned int i = 0; i < aliens_length; i++) {
-        if (!((i + 1 + current_nanoseconds) % aliens_length)) {
+        if (!((i + 1 + get_current_nanoseconds()) % aliens_length)) {
             continue;
         }
-        if (!(current_nanoseconds % 171)) {
-            if (aliens[i].state == ACTIVE) {
-                aliens[i].state = INACTIVE;
-                break;
-            }
-        }
-        if (!(current_nanoseconds % 531)) {
-            if (aliens[i].state == INACTIVE) {
-                aliens[i].state = ACTIVE;
-                set_random_position(&aliens[i]);
-                break;
-            }
-        }
+        cycle_alien(&aliens[i]);
     }
 }
 
@@ -92,6 +116,10 @@ void move_alien(Alien *alien) {
     }
 
     if (get_current_nanoseconds() % 2) {
+        return;
+    }
+
+    if (alien->state == VROOMING) {
         return;
     }
 
