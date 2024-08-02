@@ -1,10 +1,10 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
-#include <inttypes.h>
-
 long get_current_time();
 
-uint64_t get_current_nanoseconds();
+void set_current_time(unsigned long time);
+
+void increment_current_time();
 
 #endif

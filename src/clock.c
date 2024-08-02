@@ -2,17 +2,16 @@
 
 #include "clock.h"
 
+static unsigned long current_time;
+
 long get_current_time() {
-    return time(NULL);
+    return current_time;
 }
 
-uint64_t get_current_nanoseconds() {
-    struct timespec ts;
-
-    if (timespec_get(&ts, TIME_UTC) != TIME_UTC) {
-        return 0;
-    }
-
-    return 10000000 * ts.tv_sec + ts.tv_nsec;
+void set_current_time(unsigned long time) {
+    current_time = time;
 }
 
+void increment_current_time() {
+    current_time++;
+}

@@ -48,10 +48,7 @@ void render() {
     move_aliens();
     spawn_new_aliens();
 
-    // box(win, 0, 0);
     wrefresh(win);
-
-    // render_timer();
 }
 
 int take_input() {
@@ -71,6 +68,7 @@ void finish() {
 
     finish_stars();
     finish_comets();
+    finish_aliens();
     finish_timer();
 
     endwin();

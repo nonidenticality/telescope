@@ -2,6 +2,7 @@
 #include <time.h>
 
 #include "renderer.h"
+#include "clock.h"
 
 char exit_flag = 1;
 
@@ -26,6 +27,7 @@ int main() {
 
     setup();
 
+    set_current_time(rand());
     struct timespec down_cycle = {0, 10000000};
 
     while(exit_flag) {
@@ -33,6 +35,7 @@ int main() {
 
         handle_input(take_input());
         nanosleep(&down_cycle, NULL);
+        increment_current_time();
     }
 
     finish();

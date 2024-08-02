@@ -36,7 +36,7 @@ void render_alien(WINDOW *win, Alien *alien) {
 }
 
 void render_vroom(WINDOW *win, Alien *alien) {
-    if (get_current_nanoseconds() % 2) {
+    if (get_current_time() % 2) {
         mvwprintw(win, alien->y, alien->x, "x");
     } else {
         mvwprintw(win, alien->y, alien->x, "+");
@@ -60,19 +60,19 @@ void set_random_position(Alien* alien) {
 }
 
 void cycle_active_alien(Alien *alien) {
-    if (!(get_current_nanoseconds() % 171)) {
+    if (!(get_current_time() % 171)) {
         alien->state = VROOMING;
     }
 }
 
 void cycle_vrooming_alien(Alien * alien) {
-    if (!(get_current_nanoseconds() % 11)) {
+    if (!(get_current_time() % 11)) {
         alien->state = INACTIVE;
     }
 }
 
 void cycle_inactive_alien(Alien *alien) {
-    if (!(get_current_nanoseconds() % 531)) {
+    if (!(get_current_time() % 531)) {
         alien->state = ACTIVE;
         set_random_position(alien);
     }
@@ -94,7 +94,7 @@ void cycle_alien(Alien *alien) {
 
 void cycle_aliens() {
     for (unsigned int i = 0; i < aliens_length; i++) {
-        if (!((i + 1 + get_current_nanoseconds()) % aliens_length)) {
+        if (!((i + 1 + get_current_time()) % aliens_length)) {
             continue;
         }
         cycle_alien(&aliens[i]);
@@ -111,11 +111,11 @@ void new_interest_point(Alien *alien) {
 }
 
 void move_alien(Alien *alien) {
-    if (!(get_current_nanoseconds() % 15)) {
+    if (!(get_current_time() % 15)) {
         new_interest_point(alien);
     }
 
-    if (get_current_nanoseconds() % 2) {
+    if (get_current_time() % 2) {
         return;
     }
 
