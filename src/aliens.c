@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "aliens.h"
+#include "defs.h"
 #include "clock.h"
 
 enum AlienState{
@@ -55,8 +56,8 @@ void render_aliens(WINDOW* win) {
 }
 
 void set_random_position(Alien* alien) {
-    alien->x = rand() % COLS;
-    alien->y = rand() % LINES;
+    alien->x = rand() % getWidth();
+    alien->y = rand() % getHeight();
 }
 
 void cycle_active_alien(Alien *alien) {
@@ -106,8 +107,8 @@ void spawn_new_aliens() {
 }
 
 void new_interest_point(Alien *alien) {
-    alien->toX = rand() % COLS;
-    alien->toY = rand() % LINES;
+    alien->toX = rand() % getWidth();
+    alien->toY = rand() % getHeight();
 }
 
 void move_alien(Alien *alien) {

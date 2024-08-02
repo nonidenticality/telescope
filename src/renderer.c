@@ -3,26 +3,24 @@
 
 #include "renderer.h"
 
+#include "defs.h"
 #include "stars.h"
 #include "comets.h"
 #include "aliens.h"
 #include "timer.h"
 
 static WINDOW * win = NULL;
-static unsigned int WIDTH, HEIGHT;
 
 void resize() {
-    WIDTH = COLS;
-    HEIGHT = LINES;
     if (win != NULL) {
-        wresize(win, HEIGHT, WIDTH);
+        wresize(win, getHeight(), getWidth());
     }
 }
 
 void setup() {
     initscr();
 
-    win = newwin(LINES, COLS, 0, 0);
+    win = newwin(getHeight(), getWidth(), 0, 0);
 
     noecho();
     wtimeout(win, 0);

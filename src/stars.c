@@ -2,6 +2,7 @@
 #include <math.h>
 
 #include "stars.h"
+#include "defs.h"
 
 static View view;
 
@@ -22,8 +23,8 @@ void render_star(WINDOW *win, View* view, int x, int y) {
 }
 
 void render_stars(WINDOW *win) {
-    for (int i = 1; i < LINES - 1; i++) {
-        for (int j = 1; j < COLS - 1; j++) {
+    for (unsigned int i = 1; i < getHeight() - 1; i++) {
+        for (unsigned int j = 1; j < getWidth() - 1; j++) {
             render_star(win, &view, j, i);
         }
     }

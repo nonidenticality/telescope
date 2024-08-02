@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <time.h>
 
+#include "defs.h"
 #include "clock.h"
 #include "comets.h"
 
@@ -48,7 +49,7 @@ void render_trail(WINDOW *win, Comet *comet) {
     for (unsigned int i = 0; i < comet->trail; i++) {
         int x = get_trail_x(comet, i);
         int y = get_trail_y(comet, i);
-        if (x <= 1 || y <= 1 || x >= COLS - 1 || y >= LINES - 1) {
+        if (x <= 1 || y <= 1 || x >= getWidth() - 1 || y >= getHeight() - 1) {
             continue;
         }
         mvwaddch(win,
@@ -179,7 +180,7 @@ void spawn_new_comets() {
     if (!is_below_size_limit()) {
         return;
     }
-    Comet *new_comet = add_comet(COLS, LINES);
+    Comet *new_comet = add_comet(getWidth(), getHeight());
     storm.comets[storm.size] = new_comet;
     storm.size++;
 }
