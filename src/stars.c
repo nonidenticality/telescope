@@ -10,11 +10,19 @@ void setup_stars() {
     view.seed = rand();
 }
 
+char is_renderable(int seed, int x, int y) {
+    return !((seed + (int)(191 * cos(x & y) + 13 * (x | y) - 31 * x * y * cos(x ^ y))) % 13);
+}
+
+char is_large(int seed, int x, int y) {
+    return !((int)(seed + (x + y * cos(x | y) + cos(x ^ y))) % 3);
+}
+
 void render_star(WINDOW *win, View* view, int x, int y) {
     int seed = view->seed;
 
-    if (!((seed + (int)(191 * cos(x & y) + 13 * (x | y) - 31 * x * y * cos(x ^ y))) % 13)) {
-        if (!((int)(seed + (x + y * cos(x | y) + cos(x ^ y))) % 3)) {
+    if (is_renderable(seed, x, y)) {
+        if (is_large(seed, x, y)) {
             mvwprintw(win, y, x, "*");
         } else {
             mvwprintw(win, y, x, ".");
