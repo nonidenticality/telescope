@@ -1,12 +1,14 @@
 #include <stdlib.h>
 #include "aliens.h"
+#include "math.h"
 #include "defs.h"
 #include "clock.h"
 
 enum AlienState{
     INACTIVE,
     ACTIVE,
-    VROOMING,
+    VROOMING_OUT,
+    VROOMING_IN
 };
 
 static const enum AlienState INITIAL_STATE = INACTIVE;
@@ -14,15 +16,16 @@ static const char *SHIP_CHAR = "0";
 
 typedef struct {
     enum AlienState state;
-    unsigned int x, y,
+    unsigned int stateLength,
+                x, y,
                 vX, vY,
                 toX, toY;
 } Alien;
 
 static Alien aliens[3] = {
-    { INITIAL_STATE, 0, 0, 0, 0, 15, 15},
-    { INITIAL_STATE, 0, 0, 0, 0, 5, 5},
-    { INITIAL_STATE, 0, 0, 0, 0, 10, 10},
+    { INITIAL_STATE, 0, 0, 0, 0, 0, 15, 15},
+    { INITIAL_STATE, 0, 0, 0, 0, 0, 5, 5},
+    { INITIAL_STATE, 0, 0, 0, 0, 0, 10, 10},
 };
 
 unsigned int aliens_length = sizeof(aliens) / sizeof(Alien);
@@ -47,10 +50,17 @@ void render_vroom(WINDOW *win, Alien *alien) {
 void render_aliens(WINDOW* win) {
     for (unsigned int i = 0; i < aliens_length; i++) {
         Alien alien = aliens[i];
-        if (alien.state == ACTIVE) {
-            render_alien(win, &alien);
-        } else if (alien.state == VROOMING) {
-            render_vroom(win, &alien);
+        switch (alien.state) {
+            case ACTIVE:
+                render_alien(win, &alien);
+                break;
+            case VROOMING_IN:
+            case VROOMING_OUT:
+                render_vroom(win, &alien);
+                break;
+            default:
+                break;
+                
         }
     }
 }
@@ -62,30 +72,41 @@ void set_random_position(Alien* alien) {
 
 void cycle_active_alien(Alien *alien) {
     if (!(get_current_time() % 171)) {
-        alien->state = VROOMING;
+        alien->state = VROOMING_OUT;
+        alien->stateLength = 0;
     }
 }
 
-void cycle_vrooming_alien(Alien * alien) {
-    if (!(get_current_time() % 11)) {
+void cycle_vrooming_in_alien(Alien * alien) {
+    if (alien->stateLength >= 50) {
+        alien->state = ACTIVE;
+    }
+}
+
+void cycle_vrooming_out_alien(Alien * alien) {
+    if (alien->stateLength >= 50) {
         alien->state = INACTIVE;
     }
 }
 
 void cycle_inactive_alien(Alien *alien) {
     if (!(get_current_time() % 531)) {
-        alien->state = ACTIVE;
+        alien->state = VROOMING_IN;
         set_random_position(alien);
+        alien->stateLength = 0;
     }
 }
 
-void cycle_alien(Alien *alien) {
+void cycle_alien_state(Alien *alien) {
     switch (aliens->state) {
         case ACTIVE:
             cycle_active_alien(alien);
             break;
-        case VROOMING:
-            cycle_vrooming_alien(alien);
+        case VROOMING_IN:
+            cycle_vrooming_in_alien(alien);
+            break;
+        case VROOMING_OUT:
+            cycle_vrooming_out_alien(alien);
             break;
         case INACTIVE:
             cycle_inactive_alien(alien);
@@ -95,10 +116,11 @@ void cycle_alien(Alien *alien) {
 
 void cycle_aliens() {
     for (unsigned int i = 0; i < aliens_length; i++) {
+        aliens[i].stateLength++;
         if (!((i + 1 + get_current_time()) % aliens_length)) {
             continue;
         }
-        cycle_alien(&aliens[i]);
+        cycle_alien_state(&aliens[i]);
     }
 }
 
@@ -111,8 +133,12 @@ void new_interest_point(Alien *alien) {
     alien->toY = rand() % getHeight();
 }
 
+int vary_velocity(int var1, int var2) {
+    return sin((float)((var1 ^ var2) % 10) / 4 * M_PI);
+}
+
 void move_alien(Alien *alien) {
-    if (!(get_current_time() % 15)) {
+    if (!(get_current_time() % 71)) {
         new_interest_point(alien);
     }
 
@@ -120,28 +146,30 @@ void move_alien(Alien *alien) {
         return;
     }
 
-    if (alien->state == VROOMING) {
+    if (alien->state == VROOMING_IN
+        || alien->state == VROOMING_OUT) {
         return;
     }
 
-    if (alien->x < alien->toX) {
-        // alien->vX = (rand() % 2);
-        alien->vX = 1;
-    } else if (alien->x > alien->toX) {
-        // alien->vX = (rand() % 2) - 2;
-        alien->vX = -1;
+    unsigned int x = alien->x,
+                 y = alien->y,
+                 toX = alien->toX,
+                 toY = alien->toY;
+
+    if (x < toX) {
+        alien->vX = vary_velocity(x, y) + 1;
+    } else if (x > toX) {
+        alien->vX = vary_velocity(x, y) - 1;
     } else {
-        alien->vX = 0;
+        // alien->vX = 0;
     }
 
-    if (alien->y < alien->toY) {
-        // alien->vY = (rand() % 2);
-        alien->vY = 1;
-    } else if (alien->y > alien->toY) {
-        // alien->vY = (rand() % 2) - 2;
-        alien->vY = -1;
+    if (y < toY) {
+        alien->vY = vary_velocity(x, y) + 1;
+    } else if (y > toY) {
+        alien->vY = vary_velocity(x, y) - 1;
     } else {
-        alien->vY = 0;
+        // alien->vY = 0;
     }
 
     alien->x += alien->vX;
